@@ -1,7 +1,6 @@
-train: ./dataset/train/images
-val: ./dataset/val/images
-# If you have test set:
-# test: ./dataset/test/images
+train: ./train/images
+val: ./val/images
+# test: ./test/images   # only if you have one
 
-nc: 2   # change to the actual number of classes
-names: ["eggplant", "aphid"]  # replace with your pest/disease class names
+nc: 5
+names: ["string-bean", "severe", "moderate-severe", "low-severe", "aphid"]

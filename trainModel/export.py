@@ -8,7 +8,7 @@ ASSETS_DIR = os.getenv("FRONTEND_ASSETS_DIR", "../frontend/src/assets/models")
 IMG_SIZE   = int(os.getenv("IMG_SIZE", "640"))
 
 print(">> Looking for trained model...")
-save_dir = pathlib.Path("runs/detect/train")
+save_dir = pathlib.Path("C:/Users/Administrator/runs/detect/train")
 best_pt = save_dir / "weights" / "best.pt"
 
 print(">> Exporting model to TFLite...")

@@ -11,7 +11,7 @@ MODEL       = os.getenv("MODEL", "yolov8n.pt")
 print(">> Training YOLOv8 model...")
 yolo = YOLO(MODEL)
 results = yolo.train(
-    data="./datasets/data.yaml",   # ✅ fixed path (no 's')
+    data="./datasets/data.yaml", 
     imgsz=IMG_SIZE,
     epochs=EPOCHS,
     batch=16,
