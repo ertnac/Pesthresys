@@ -1,0 +1,273 @@
+/* history.page.scss */
+.history-screen {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 64px;
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  
+  .empty-text {
+    font-size: 18px;
+    color: var(--ion-color-medium);
+    margin-bottom: 24px;
+  }
+}
+
+.scan-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  .scan-info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .scan-image-container {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-right: 16px;
+    
+    &.healthy-border {
+      border: 2px solid var(--ion-color-success);
+    }
+    
+    &.infected-border {
+      border: 2px solid var(--ion-color-danger);
+    }
+    
+    .scan-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .status-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-size: 10px;
+    }
+  }
+  
+  .scan-details {
+    flex: 1;
+    
+    .plant-name {
+      font-weight: 600;
+      font-size: 16px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    .scan-date {
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .scan-meta {
+      display: flex;
+      gap: 8px;
+      
+      ion-chip {
+        height: 24px;
+        font-size: 12px;
+        
+        ion-icon {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  
+  .scan-arrow {
+    color: var(--ion-color-medium);
+    font-size: 20px;
+  }
+}
+
+/* Modal Styles */
+.scan-details-modal {
+  .scan-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    
+    .modal-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .modal-status {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+  }
+  
+  ion-list {
+    background: transparent;
+    
+    ion-item {
+      --padding-start: 0;
+      --inner-padding-end: 0;
+      --background: transparent;
+      margin-bottom: 12px;
+      
+      ion-icon {
+        color: var(--ion-color-primary);
+        font-size: 20px;
+      }
+      
+      h3 {
+        font-size: 14px;
+        color: var(--ion-color-medium);
+        margin-bottom: 4px;
+      }
+      
+      p {
+        font-size: 16px;
+        color: var(--ion-color-dark);
+      }
+    }
+  }
+  
+  .pests-section {
+    margin: 24px 0;
+    
+    .section-title {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--ion-color-dark);
+    }
+    
+    .pest-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: rgba(var(--ion-color-danger-rgb), 0.1);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      
+      ion-icon {
+        font-size: 20px;
+        margin-right: 12px;
+      }
+      
+      .pest-name {
+        flex: 1;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .action-buttons {
+    margin-top: 24px;
+    
+    ion-button {
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.search-container {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-searchbar {
+  padding: 0 8px;
+  
+  .searchbar-input-container {
+    .searchbar-input {
+      border-radius: 8px;
+    }
+  }
+}
+
+.filter-options {
+  display: flex;
+  padding: 8px 16px 16px;
+  gap: 8px;
+  overflow-x: auto;
+  
+  ion-chip {
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    
+    ion-label {
+      font-size: 14px;
+    }
+  }
+}
+
+.search-container {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.plant-name {
+  position: relative;
+  
+  .highlight {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.2);
+    border-radius: 2px;
+    padding: 0 2px;
+  }
+}
+
+.scan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.scan-id {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  font-family: monospace;
+}

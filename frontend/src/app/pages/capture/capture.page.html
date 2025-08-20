@@ -1,0 +1,139 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home" class="back-button"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Analysis</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="shareResults()" fill="clear">
+        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="analysis-container">
+    <!-- Image Preview -->
+    <div class="image-preview-container">
+      <div class="image-wrapper">
+        <img [src]="capturedImage" alt="Captured Plant" class="captured-image" />
+        <div class="image-overlay" *ngIf="!isAnalyzing && !analysisComplete">
+          <ion-icon name="camera-outline"></ion-icon>
+        </div>
+        <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="capturedImage && !isAnalyzing">
+          <ion-fab-button (click)="retakePhoto()" size="small" color="light">
+            <ion-icon name="camera-reverse-outline"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+      </div>
+    </div>
+
+    <!-- Analysis Controls -->
+    <div class="analysis-controls">
+      <ion-button expand="block" color="success" (click)="analyzeImage()" [disabled]="isAnalyzing" class="analyze-button">
+        <ion-spinner *ngIf="isAnalyzing" name="crescent"></ion-spinner>
+        <span *ngIf="!isAnalyzing">Analyze Image</span>
+        <span *ngIf="isAnalyzing">Analyzing...</span>
+      </ion-button>
+    </div>
+
+    <!-- Analysis Results -->
+    <div class="analysis-results" *ngIf="analysisComplete">
+      <div class="result-card" [class.expanded]="resultExpanded">
+        <ion-card [color]="isChiliPlant ? (isInfected ? 'danger' : 'success') : 'warning'">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon [name]="isChiliPlant ? (isInfected ? 'warning-outline' : 'checkmark-circle-outline') : 'close-circle-outline'"></ion-icon>
+              {{ isChiliPlant ? (isInfected ? '⚠️ Infected Chili Plant' : '✅ Healthy Chili Plant') : '❌ Not a Chili Plant' }}
+            </ion-card-title>
+            <ion-card-subtitle *ngIf="isChiliPlant">
+              Analyzed on {{ currentDate | date:'medium' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="result-details" *ngIf="isChiliPlant">
+              <div class="health-status">
+                <ion-icon name="leaf-outline"></ion-icon>
+                <span>Health Status: {{ isInfected ? 'Infected' : 'Healthy' }}</span>
+              </div>
+
+              <div *ngIf="isInfected" class="pest-details">
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="bug-outline"></ion-icon>
+                  <ion-label>
+                    <h3>Pest Detected</h3>
+                    <p>{{ pestType }}</p>
+                  </ion-label>
+                </ion-item>
+
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
+                  <ion-label>
+                    <h3>Severity</h3>
+                    <p>{{ severity }}</p>
+                  </ion-label>
+                  <ion-progress-bar [value]="severityValue" [color]="severityColor"></ion-progress-bar>
+                </ion-item>
+
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+                  <ion-label>
+                    <h3>Recommendation</h3>
+                    <p>{{ recommendation }}</p>
+                  </ion-label>
+                </ion-item>
+              </div>
+
+              <div *ngIf="!isInfected" class="healthy-message">
+                <ion-icon name="happy-outline"></ion-icon>
+                <p>Your chili plant looks great! No signs of pests or diseases detected.</p>
+              </div>
+            </div>
+
+            <div *ngIf="!isChiliPlant" class="not-chili-message">
+              <ion-icon name="help-circle-outline"></ion-icon>
+              <p>This doesn't appear to be a chili plant. Try capturing a clearer image of a chili plant for analysis.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Save Scan Button - Moved outside the ion-card -->
+        <ion-button expand="block" color="primary" (click)="saveScan()" fill="outline" class="save-button" 
+                   [disabled]="!canSaveScan()">
+          <ion-icon slot="start" name="save-outline"></ion-icon>
+          Save This Scan
+        </ion-button>
+
+        <div class="quick-actions">
+          <ion-button expand="block" color="medium" fill="clear" (click)="viewSimilarCases()" *ngIf="isInfected">
+            <ion-icon slot="start" name="search-outline"></ion-icon>
+            View Similar Cases
+          </ion-button>
+          
+          <div class="notes-section">
+            <ion-item>
+              <ion-textarea
+                [(ngModel)]="userNote"
+                placeholder="Add optional notes (e.g., location, plant details)"
+                rows="2"
+                autoGrow="true"
+                class="notes-textarea"
+              ></ion-textarea>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loading-animation" *ngIf="isAnalyzing">
+      <div class="loading-content">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p>Analyzing your plant...</p>
+        <p class="hint-text">This usually takes 5-10 seconds</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

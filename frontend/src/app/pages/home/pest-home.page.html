@@ -1,0 +1,165 @@
+<ion-header class="ion-no-border" mode="md">
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-label class="home-app-name">Pesthresys</ion-label>
+      <div class="home-status">
+        <ion-icon name="leaf-outline" class="home-icon"></ion-icon>
+        <ion-label class="home-subtitle">Plant Monitoring App</ion-label>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="home-screen">
+    <div class="top-background"></div>
+    <div class="main-content">  
+
+      <!-- Intro Carousel -->
+      <div class="intro-carousel">
+        <swiper-container slides-per-view="1" pagination="true" loop="true" autoplay-delay="2000"
+          autoplay-disable-on-interaction="false" speed="800">
+          <swiper-slide *ngFor="let slide of introSlides">
+            <div class="carousel-slide" [ngStyle]="{'background-image': 'url(' + slide.bgImage + ')'}">
+              <div class="carousel-overlay"></div>
+              <div class="slide-content">
+                <ion-icon [name]="slide.icon" class="slide-icon"></ion-icon>
+                <h3>{{ slide.title }}</h3>
+                <p>{{ slide.description }}</p>
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <ion-button expand="block" fill="clear" *ngFor="let action of quickActions">
+          <ion-icon slot="start" [name]="action.icon"></ion-icon>
+          {{ action.label }}
+        </ion-button>
+      </div>
+
+      <!-- Plant Health Dashboard -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <ion-label class="section-title">Plant Health Dashboard</ion-label>
+          <ion-button fill="clear" size="small">View All</ion-button>
+        </div>
+
+        <ion-card class="dashboard-card">
+          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="6" class="metric-col">
+                  <div class="metric-value">{{ dashboardStats.plantsTracked }}</div>
+                  <div class="metric-label">Plants Tracked</div>
+                </ion-col>
+                <ion-col size="6" class="metric-col">
+                  <div class="metric-value">{{ dashboardStats.todaysScans }}</div>
+                  <div class="metric-label">Today's Scans</div>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col class="health-metrics">
+                  <div class="health-chip healthy">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    <span>{{ dashboardStats.healthyCount }} Healthy</span>
+                  </div>
+                  <div class="health-chip watchlist">
+                    <ion-icon name="alert-circle-outline"></ion-icon>
+                    <span>{{ dashboardStats.watchlistCount }} Watchlist</span>
+                  </div>
+                  <div class="health-chip infected">
+                    <ion-icon name="warning-outline"></ion-icon>
+                    <span>{{ dashboardStats.infectedCount }} Infected</span>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+
+            <!-- High Risk Alert -->
+            <div class="risk-alert" *ngIf="highRiskAlert">
+              <ion-icon name="warning-outline" class="alert-icon"></ion-icon>
+              <div class="alert-content">
+                <ion-label class="alert-title">High Risk Pest Detected</ion-label>
+                <ion-label class="alert-subtitle">{{ highRiskAlert.plant }} - {{ highRiskAlert.pest }}</ion-label>
+              </div>
+              <ion-button fill="clear" size="small">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+              </ion-button>
+            </div>
+
+            <div class="no-risk-alert" *ngIf="!highRiskAlert">
+              <ion-icon name="checkmark-circle-outline" class="alert-icon safe"></ion-icon>
+              <div class="alert-content">
+                <ion-label class="alert-title">No High Risk Pests Detected</ion-label>
+                <ion-label class="alert-subtitle">All plants appear healthy</ion-label>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Recent Scans Section -->
+      <div class="recent-scans-section">
+        <div class="section-header">
+          <ion-label class="section-title">Recent Scans</ion-label>
+          <ion-button fill="clear" size="small" (click)="onHistory()">View All</ion-button>
+        </div>
+
+        <ion-card class="scan-result-card" *ngFor="let scan of recentScans">
+          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="3">
+                  <div class="scan-thumbnail">
+                    <img [src]="scan.plantImage || 'assets/images/default-plant.png'" [alt]="scan.plantName"
+                      class="thumbnail-img">
+                  </div>
+                </ion-col>
+                <ion-col size="6">
+                  <div class="scan-info">
+                    <ion-label class="plant-name">{{ scan.plantName }}</ion-label>
+                    <ion-label class="confidence" *ngIf="scan.analysisDetails">
+                      ({{ scan.analysisDetails.confidence }} confidence)
+                    </ion-label>
+                    <!-- <ion-label class="scan-time">{{ scan.date | timeAgo }}</ion-label> -->
+                    <ion-label class="pest-info" *ngIf="scan.pestsDetected?.length > 0">
+                      <ion-icon name="bug-outline"></ion-icon>
+                      {{ scan.pestsDetected[0].name }} ({{ scan.pestsDetected[0].severity }} risk)
+                    </ion-label>
+                  </div>
+                </ion-col>
+                <ion-col size="3">
+                  <div class="status-chip" [ngClass]="scan.status">{{ scan.status | titlecase }}</div>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <div class="scan-actions">
+                    <ion-button fill="clear" size="small" (click)="viewScanDetails(scan.id)">
+                      <ion-icon slot="start" name="eye-outline"></ion-icon>
+                      Details
+                    </ion-button>
+                    <ion-button fill="clear" size="small" (click)="rescanPlant(scan.id)">
+                      <ion-icon slot="start" name="refresh-outline"></ion-icon>
+                      Re-scan
+                    </ion-button>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
+        </ion-card>
+
+        <div class="no-scans-message" *ngIf="recentScans.length === 0">
+          <ion-icon name="leaf-outline" class="empty-icon"></ion-icon>
+          <h4>No Recent Scans Found</h4>
+          <p>Scan your first plant to get started with pest monitoring</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

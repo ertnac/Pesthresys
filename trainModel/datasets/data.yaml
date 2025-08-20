@@ -1,0 +1,7 @@
+train: ./dataset/train/images
+val: ./dataset/val/images
+# If you have test set:
+# test: ./dataset/test/images
+
+nc: 2   # change to the actual number of classes
+names: ["eggplant", "aphid"]  # replace with your pest/disease class names

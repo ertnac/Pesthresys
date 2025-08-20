@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="../../profile/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>My Plant Collection</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <div class="empty-state" *ngIf="plants.length === 0">
+      <ion-icon name="flower-outline" color="medium"></ion-icon>
+      <h3>No plants yet</h3>
+      <p>Start adding plants to your collection</p>
+      <ion-button fill="solid" color="primary">
+        <ion-icon slot="start" name="add"></ion-icon>
+        Add First Plant
+      </ion-button>
+    </div>
+
+    <div class="plants-grid" *ngIf="plants.length > 0">
+      <ion-card *ngFor="let plant of plants">
+        <img [src]="plant.image" [alt]="plant.name">
+        <ion-card-header>
+          <ion-card-title>{{plant.name}}</ion-card-title>
+          <ion-card-subtitle>{{plant.species}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="plant-details">
+            <div class="detail-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Added: {{plant.dateAdded}}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="water-outline"></ion-icon>
+              <span>Water: {{plant.waterSchedule}}</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

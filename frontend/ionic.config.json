@@ -1,0 +1,7 @@
+{
+  "name": "Pesthresys",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

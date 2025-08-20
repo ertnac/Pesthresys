@@ -1,0 +1,552 @@
+/* Global Styles for Plant Monitoring App */
+.home-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+
+  .home-icon {
+    font-size: 18px;
+    color: white;
+  }
+
+  .home-subtitle {
+    font-family: 'medium';
+    font-size: 12px;
+    color: white;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 8px 0;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+/* Metrics Grid */
+.metric-col {
+  text-align: center;
+  padding: 12px;
+  transition: all 0.2s ease;
+
+  &:active {
+    background: rgba(var(--ion-color-primary-rgb), 0.05);
+    border-radius: 12px;
+  }
+
+  .metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+    margin-bottom: 4px;
+  }
+
+  .metric-label {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+    letter-spacing: 0.3px;
+  }
+}
+
+/* Health Status Chips */
+.health-metrics {
+  display: flex;
+  justify-content: space-around;
+  margin: 12px 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.health-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  ion-icon {
+    font-size: 14px;
+  }
+
+  &.healthy {
+    background: rgba(var(--ion-color-success-rgb), 0.1);
+    color: var(--ion-color-success-shade);
+  }
+
+  &.watchlist {
+    background: rgba(var(--ion-color-warning-rgb), 0.1);
+    color: var(--ion-color-warning-shade);
+  }
+
+  &.infected {
+    background: rgba(var(--ion-color-danger-rgb), 0.1);
+    color: var(--ion-color-danger-shade);
+  }
+}
+
+/* Scan Button */
+.scan-button-container {
+  padding: 16px;
+  text-align: center;
+
+  .scan-card {
+    background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-tint) 100%);
+    color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(var(--ion-color-primary-rgb), 0.3);
+    transition: all 0.3s ease;
+    overflow: visible;
+
+    &:active {
+      transform: scale(0.96);
+      box-shadow: 0 2px 10px rgba(var(--ion-color-primary-rgb), 0.2);
+    }
+
+    .scan-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    .scan-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .scan-label {
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 16px 16px;
+  gap: 8px;
+
+  ion-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      font-size: 20px;
+      color: var(--ion-color-primary);
+    }
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+}
+
+/* Recent Scans */
+.scan-result-card {
+  border-radius: 16px;
+  margin: 8px 16px;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: translateY(2px);
+  }
+
+  .scan-thumbnail {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ion-color-light);
+
+    .thumbnail-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .scan-info {
+    .plant-name {
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+    }
+
+    .confidence {
+      font-size: 11px;
+      color: var(--ion-color-medium);
+      display: block;
+    }
+
+    .scan-time {
+      font-size: 11px;
+      color: var(--ion-color-medium);
+      margin-top: 4px;
+      display: block;
+    }
+
+    .pest-info {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--ion-color-danger);
+      margin-top: 4px;
+
+      ion-icon {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .status-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto;
+
+    &.healthy {
+      background: rgba(var(--ion-color-success-rgb), 0.1);
+      color: var(--ion-color-success-shade);
+    }
+
+    &.watchlist {
+      background: rgba(var(--ion-color-warning-rgb), 0.1);
+      color: var(--ion-color-warning-shade);
+    }
+
+    &.infected {
+      background: rgba(var(--ion-color-danger-rgb), 0.1);
+      color: var(--ion-color-danger-shade);
+    }
+  }
+
+  .scan-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+
+    ion-button {
+      --padding-start: 4px;
+      --padding-end: 4px;
+      font-size: 10px;
+      color: var(--ion-color-medium);
+
+      ion-icon {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* Smart Tips */
+.tip-card {
+  border-radius: 16px;
+  margin: 8px;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: translateY(2px);
+  }
+
+  ion-card-header {
+    padding-bottom: 8px;
+  }
+
+  ion-card-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  ion-card-subtitle {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+  }
+
+  ion-card-content {
+    padding-top: 0;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .tip-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+
+    ion-button {
+      --padding-start: 0;
+      --padding-end: 0;
+      font-size: 12px;
+      height: 28px;
+
+      ion-icon {
+        font-size: 14px;
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+/* Risk Alert */
+.risk-alert {
+  background: rgba(var(--ion-color-danger-rgb), 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+
+  &:active {
+    background: rgba(var(--ion-color-danger-rgb), 0.12);
+  }
+
+  .alert-icon {
+    font-size: 24px;
+    color: var(--ion-color-danger);
+    margin-right: 12px;
+  }
+
+  .alert-content {
+    flex: 1;
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+      color: var(--ion-color-danger-shade);
+    }
+
+    .alert-subtitle {
+      font-size: 12px;
+      color: var(--ion-color-medium);
+      display: block;
+    }
+  }
+
+  ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 16px 8px;
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  ion-button {
+    font-size: 12px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+/* Task Items */
+.tasks-section {
+  ion-item {
+    --border-radius: 12px;
+    --padding-start: 12px;
+    --inner-padding-end: 8px;
+    margin: 8px 16px;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: translateY(2px);
+    }
+
+    ion-icon[slot="start"] {
+      font-size: 20px;
+      margin-right: 12px;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    p {
+      font-size: 12px;
+      color: var(--ion-color-medium);
+    }
+
+    ion-button {
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+  }
+}
+
+/* Empty States */
+.empty-state {
+  text-align: center;
+  padding: 24px 16px;
+  margin: 16px;
+
+  .empty-image {
+    width: 120px;
+    height: 120px;
+    opacity: 0.7;
+    margin-bottom: 16px;
+  }
+
+  .empty-title {
+    font-size: 16px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .empty-subtitle {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  ion-button {
+    --border-radius: 12px;
+    font-weight: 500;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-card, .scan-result-card, .tip-card {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+  .scan-button-container {
+    padding: 24px;
+  }
+
+  .quick-actions {
+    padding: 0 24px 24px;
+  }
+
+  .scan-result-card {
+    margin: 8px 24px;
+  }
+
+  .section-header {
+    padding: 24px 24px 12px;
+  }
+
+  .tasks-section ion-item {
+    margin: 8px 24px;
+  }
+}
+
+.intro-carousel {
+  margin: 12px; /* margin around the carousel */
+  border-radius: 16px; /* rounded corners */
+  overflow: hidden; /* so the image doesn't overflow rounded edges */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* subtle shadow for depth */
+}
+
+.carousel-slide {
+  position: relative;
+  background-size: cover; /* Fill container while keeping aspect ratio */
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 220px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35); /* Dark overlay for text contrast */
+  z-index: 1;
+}
+
+.slide-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  padding: 15px;
+}
+
+.slide-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.no-scans-message {
+  text-align: center;
+  padding: 30px 20px;
+  margin: 20px 0;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+}
+
+.no-scans-message .empty-icon {
+  font-size: 48px;
+  color: var(--ion-color-medium);
+  margin-bottom: 15px;
+}
+
+.no-scans-message h4 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--ion-color-dark);
+}
+
+.no-scans-message p {
+  color: var(--ion-color-medium);
+  margin-bottom: 20px;
+}

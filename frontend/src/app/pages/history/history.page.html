@@ -1,0 +1,81 @@
+<ion-header mode="md">
+  <ion-toolbar color="primary">
+    <ion-title>Scan History</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleSearch()">
+        <ion-icon slot="icon-only" [name]="isSearching ? 'close-outline' : 'search-outline'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="history-screen">
+    <!-- Search Bar -->
+    <div *ngIf="isSearching" class="search-container">
+      <ion-searchbar 
+        [(ngModel)]="searchQuery" 
+        (ionInput)="filterHistory()"
+        placeholder="Search by plant name, location, status, or scan ID"
+        animated="true"
+        debounce="300"
+        class="history-searchbar">
+      </ion-searchbar>
+      
+      <div class="filter-options" *ngIf="isSearching">
+        <ion-chip [color]="filterStatus === 'all' ? 'primary' : 'medium'" outline (click)="setStatusFilter('all')">
+          <ion-label>All</ion-label>
+        </ion-chip>
+        <ion-chip [color]="filterStatus === 'healthy' ? 'success' : 'medium'" outline (click)="setStatusFilter('healthy')">
+          <ion-label>Healthy</ion-label>
+        </ion-chip>
+        <ion-chip [color]="filterStatus === 'infected' ? 'danger' : 'medium'" outline (click)="setStatusFilter('infected')">
+          <ion-label>Infected</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+
+    <!-- Empty State for Search Results -->
+    <div *ngIf="isSearching && filteredHistory.length === 0 && searchQuery" class="empty-state">
+      <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+      <ion-label class="empty-text">No results found for "{{searchQuery}}"</ion-label>
+      <ion-button fill="clear" (click)="clearSearch()">Clear search</ion-button>
+    </div>
+
+    <!-- Empty State for No History -->
+    <div *ngIf="!isSearching && history.length === 0" class="empty-state">
+      <ion-icon name="leaf-outline" class="empty-icon"></ion-icon>
+      <ion-label class="empty-text">No scan history yet</ion-label>
+    </div>
+
+    <!-- History List -->
+    <div *ngFor="let scan of (isSearching ? filteredHistory : history)" class="scan-card" (click)="openScanDetails(scan.id)">
+      <div class="scan-info">
+        <div class="scan-image-container" [class]="scan.status + '-border'">
+          <img [src]="scan.plantImage || 'assets/images/default-plant.png'" class="scan-image">
+          <ion-badge [color]="scan.status === 'healthy' ? 'success' : 'danger'" class="status-badge">
+            {{ scan.status === 'healthy' ? 'Healthy' : 'Infected' }}
+          </ion-badge>
+        </div>
+        <div class="scan-details">
+          <div class="scan-header">
+            <ion-label class="plant-name">{{scan.plantName}}</ion-label>
+            <ion-label class="scan-id">ID: {{scan.id}}</ion-label>
+          </div>
+          <ion-label class="scan-date">{{scan.date | date:'medium'}}</ion-label>
+          <div class="scan-meta">
+            <ion-chip *ngIf="scan.pestsDetected && scan.pestsDetected.length > 0" color="danger" outline>
+              <ion-icon name="bug-outline"></ion-icon>
+              <ion-label>{{scan.pestsDetected.length}} pests</ion-label>
+            </ion-chip>
+            <ion-chip color="medium" outline>
+              <ion-icon name="location-outline"></ion-icon>
+              <ion-label>{{scan.location || 'Unknown'}}</ion-label>
+            </ion-chip>
+          </div>
+        </div>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="scan-arrow"></ion-icon>
+    </div>
+  </div>
+</ion-content>

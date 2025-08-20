@@ -1,0 +1,11 @@
+.preview {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+
+  img {
+    max-width: 90%;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.3);
+  }
+}

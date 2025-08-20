@@ -1,0 +1,58 @@
+<!--
+  Authors : initappz (Rahul Jograna)
+  Website : https://initappz.com/
+  App Name : initPay This App Template Source code is licensed as per the
+  terms found in the Website https://initappz.com/license
+  Copyright and Good Faith Purchasers © 2023-present initappz.
+ -->
+<ion-header mode="md">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="onBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Setting</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="setting-section">
+    <div class="navigation-buttons">
+      <ion-item lines="none">
+        <ion-icon name="notifications" slot="start" color="secondary"></ion-icon>
+        <ion-label>Notification</ion-label>
+        <ion-toggle slot="end" mode="md" [checked]="true"></ion-toggle>
+      </ion-item>
+    </div>
+
+    <div class="navigation-buttons">
+      <ion-item lines="none">
+        <ion-icon name="rocket" slot="start" color="secondary"></ion-icon>
+        <ion-label>Fast Payment</ion-label>
+        <ion-toggle slot="end" mode="md" [checked]="false"></ion-toggle>
+      </ion-item>
+    </div>
+
+    <div class="navigation-buttons">
+      <ion-item lines="none" detail="">
+        <ion-icon name="finger-print" slot="start" color="secondary"></ion-icon>
+        <ion-label>Fingerprint</ion-label>
+      </ion-item>
+    </div>
+
+    <div class="navigation-buttons">
+      <ion-item lines="none">
+        <ion-icon name="language" slot="start" color="secondary"></ion-icon>
+        <ion-label>Language</ion-label>
+        <ion-select value="peperoni" placeholder="Language">
+          <ion-select-option value="peperoni">English</ion-select-option>
+          <ion-select-option value="hawaii">Spanish</ion-select-option>
+          <ion-select-option value="lored">Hindi</ion-select-option>
+          <ion-select-option value="olrd">Gujarati</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+    </div>
+  </div>
+</ion-content>

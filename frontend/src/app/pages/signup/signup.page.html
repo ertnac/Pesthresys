@@ -1,0 +1,99 @@
+<ion-content>
+  <div class="detection-screen">
+    <div class="science-background">
+      <svg class="floating-molecule molecule-1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="8" fill="var(--ion-color-tertiary)" opacity="0.8" />
+        <circle cx="30" cy="30" r="5" fill="var(--ion-color-secondary)" opacity="0.6" />
+        <circle cx="70" cy="30" r="5" fill="var(--ion-color-secondary)" opacity="0.6" />
+        <line x1="50" y1="50" x2="30" y2="30" stroke="var(--ion-color-medium)" stroke-width="2" opacity="0.5" />
+        <line x1="50" y1="50" x2="70" y2="30" stroke="var(--ion-color-medium)" stroke-width="2" opacity="0.5" />
+      </svg>
+    </div>
+
+    <div class="main-content">
+      <div class="register-header">
+        <div class="detection-animation">
+          <svg class="magnifying-glass" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="28" cy="28" r="20" fill="none" stroke="var(--ion-color-primary)" stroke-width="3" />
+            <line x1="40" y1="40" x2="56" y2="56" stroke="var(--ion-color-primary)" stroke-width="3" stroke-linecap="round" />
+            <circle cx="28" cy="20" r="3" fill="var(--ion-color-danger)" class="pest-dot" />
+            <circle cx="35" cy="30" r="2" fill="var(--ion-color-warning)" class="pest-dot" />
+          </svg>
+        </div>
+        <ion-label class="head">Pesthresys App</ion-label>
+        <ion-label class="sub">Identify plant pests instantly<br>Register to save your detection history</ion-label>
+      </div>
+
+      <div class="form-container">
+        <ion-item lines="none" class="nature-input">
+          <ion-icon name="person-outline" slot="start" color="medium"></ion-icon>
+          <ion-input 
+            type="text" 
+            placeholder="Full name"
+            inputmode="text"
+            autocapitalize="words"
+            clearInput>
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="nature-input">
+          <ion-icon name="mail-outline" slot="start" color="medium"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Email address"
+            inputmode="email"
+            autocapitalize="off"
+            clearInput>
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="nature-input">
+          <ion-icon name="lock-closed-outline" slot="start" color="medium"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Create password"
+            clearInput>
+          </ion-input>
+          <ion-icon name="eye-outline" slot="end" color="medium" class="toggle-password"></ion-icon>
+        </ion-item>
+
+        <ion-button 
+          expand="block" 
+          color="primary" 
+          class="register-button" 
+          (click)="onSign()">
+          <ion-icon name="bug-outline" slot="start"></ion-icon>
+          Register
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <div class="divider">
+          <span>or continue with</span>
+        </div>
+
+        <div class="social-auth">
+          <ion-button fill="outline" color="medium" class="social-button">
+            <ion-icon name="logo-google" slot="start"></ion-icon>
+            Google
+          </ion-button>
+          <ion-button fill="outline" color="medium" class="social-button">
+            <ion-icon name="logo-apple" slot="start"></ion-icon>
+            Apple
+          </ion-button>
+        </div>
+
+        <div class="login-prompt">
+          <ion-label>Already have an account?</ion-label>
+          <ion-button fill="clear" color="primary" (click)="onSign()">Sign In</ion-button>
+        </div>
+
+        <div class="privacy-notice">
+          <ion-text color="medium">
+            <small>By registering, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a></small>
+          </ion-text>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+                

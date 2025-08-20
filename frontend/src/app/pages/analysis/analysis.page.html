@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border" mode="md">
+  <ion-toolbar color="primary">
+    <ion-title>Plant Analysis</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="analysis-screen">
+
+    <!-- Filter Dropdown -->
+    <ion-item lines="none">
+      <ion-label>Time Range</ion-label>
+      <ion-select [(ngModel)]="selectedRange" (ionChange)="updateChart()">
+        <ion-select-option value="hourly">Hourly</ion-select-option>
+        <ion-select-option value="daily">Daily</ion-select-option>
+        <ion-select-option value="weekly">Weekly</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Chart Container -->
+    <div class="chart-container">
+      <canvas id="plantStatsChart"></canvas>
+    </div>
+
+    <!-- Dynamic subtitle below chart -->
+    <div class="chart-subtitle">
+      {{ chartSubtitle }}
+    </div>
+
+  </div>
+</ion-content>

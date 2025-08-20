@@ -1,0 +1,82 @@
+<ion-content>
+  <div class="login-screen">
+    <!-- Animated Background Elements -->
+    <div class="nature-background">
+      <svg class="floating-leaf leaf-1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="var(--ion-color-tertiary)" d="M50 0 Q70 30 50 60 Q30 30 50 0" opacity="0.8" />
+      </svg>
+      <svg class="floating-leaf leaf-2" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="var(--ion-color-secondary)" d="M50 0 Q70 30 50 60 Q30 30 50 0" opacity="0.6" />
+      </svg>
+      <svg class="floating-leaf leaf-3" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="var(--ion-color-primary)" d="M50 0 Q70 30 50 60 Q30 30 50 0" opacity="0.4" />
+      </svg>
+    </div>
+
+    <div class="main-content">
+      <!-- Header with Plant Icon -->
+      <div class="login-header">
+        <svg class="plant-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path fill="var(--ion-color-primary)" d="M12,20a8,8 0 0,1 -8,-8a8,8 0 0,1 8,-8a8,8 0 0,1 8,8a8,8 0 0,1 -8,8m0-18a10,10 0 0,0 -10,10a10,10 0 0,0 10,10a10,10 0 0,0 10,-10a10,10 0 0,0 -10,-10m-2,5a1,1 0 0,0 -1,1a1,1 0 0,0 1,1a1,1 0 0,0 1,-1a1,1 0 0,0 -1,-1m5,0a1,1 0 0,0 -1,1a1,1 0 0,0 1,1a1,1 0 0,0 1,-1a1,1 0 0,0 -1,-1m-3,3a4,4 0 0,0 -4,4a1,1 0 0,0 1,1a1,1 0 0,0 1,-1a2,2 0 0,1 2,-2a1,1 0 0,0 1,-1a1,1 0 0,0 -1,-1z"/>
+        </svg>
+        <ion-label class="head">Welcome Back</ion-label>
+        <ion-label class="sub">Protect your plants by signing in</ion-label>
+      </div>
+
+      <!-- Login Form -->
+      <div class="form-container">
+        <ion-item lines="none" class="form-input">
+          <ion-icon name="call-outline" slot="start" color="medium"></ion-icon>
+          <ion-input 
+            type="tel" 
+            placeholder="Phone Number" 
+            inputmode="tel"
+            >
+          </ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="form-input">
+          <ion-icon name="lock-closed-outline" slot="start" color="medium"></ion-icon>
+          <ion-input 
+            placeholder="Password" 
+            [type]="viewPassword ? 'text' : 'password'" 
+            >
+          </ion-input>
+          <ion-button 
+            fill="clear" 
+            slot="end" 
+            (click)="viewPassword = !viewPassword">
+            <ion-icon 
+              slot="icon-only" 
+              [name]="viewPassword ? 'eye-off-outline' : 'eye-outline'">
+            </ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <ion-button 
+          expand="block" 
+          color="primary" 
+          (click)="onHome()"
+          class="login-button">
+          <ion-icon name="leaf-outline" slot="start"></ion-icon>
+          Sign In
+        </ion-button>
+
+        <!-- Alternative Login Options -->
+        <div class="divider">
+          <span>or continue with</span>
+        </div>
+
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          color="medium"
+          (click)="onSignIn()"
+          class="biometric-button">
+          <ion-icon slot="start"></ion-icon>
+          Sign up 
+      </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

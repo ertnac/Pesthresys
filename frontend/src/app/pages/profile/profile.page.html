@@ -1,0 +1,65 @@
+<ion-header class="ion-no-border" mode="md">
+  <ion-toolbar color="primary">
+    <ion-title>My Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="profile-container">
+    <!-- Profile Header with Nature Background -->
+    <div class="profile-header">
+      <div class="leaf-pattern"></div>
+      <div class="profile-avatar">
+        <img src="../../../assets/images/man.png" alt="User profile picture" class="avatar-img">
+        <ion-button fill="clear" color="light" class="edit-btn">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="profile-info">
+      <h2 class="user-name">Dr. Alfante</h2>
+      <p class="user-title">Hacker yarn</p>
+    </div>
+
+    <!-- Profile Actions -->
+    <div class="profile-actions">
+      <ion-list lines="none">
+
+        <!-- Update these items in your profile.page.html -->
+        <ion-item button [routerLink]="['/profile-actions/plant-collection']" detail="false">
+          <ion-icon slot="start" name="flower-outline" color="secondary"></ion-icon>
+          <ion-label>My Plant Collection</ion-label>
+        </ion-item>
+
+        <ion-item button [routerLink]="['/profile-actions/pest-library']" detail="false">
+          <ion-icon slot="start" name="bug-outline" color="tertiary"></ion-icon>
+          <ion-label>Pest & Disease Library</ion-label>
+        </ion-item>
+
+        <ion-item button [routerLink]="['/profile-actions/settings']" detail="false">
+          <ion-icon slot="start" name="settings-outline" color="medium"></ion-icon>
+          <ion-label>App Settings</ion-label>
+        </ion-item>
+
+        <ion-item button [routerLink]="['/profile-actions/help-support']" detail="false">
+          <ion-icon slot="start" name="help-circle-outline" color="medium"></ion-icon>
+          <ion-label>Help & Support</ion-label>
+        </ion-item>
+
+        <ion-item button [routerLink]="['/profile-actions/about']" detail="false">
+          <ion-icon slot="start" name="information-circle-outline" color="medium"></ion-icon>
+          <ion-label>About Pesthresys</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div class="signout-container">
+      <ion-button expand="block" fill="clear" color="danger" (click)="onLogout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Sign Out
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

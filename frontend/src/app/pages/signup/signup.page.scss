@@ -1,0 +1,246 @@
+/* Pest Detection App Specific Styles */
+.detection-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  
+  .science-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    
+    .floating-molecule {
+      position: absolute;
+      opacity: 0.3;
+      z-index: 0;
+      
+      &.molecule-1 {
+        top: 10%;
+        left: 10%;
+        width: 80px;
+        height: 80px;
+        animation: float 8s ease-in-out infinite;
+      }
+      
+      &.molecule-2 {
+        top: 60%;
+        left: 70%;
+        width: 60px;
+        height: 60px;
+        animation: float 10s ease-in-out infinite reverse;
+      }
+    }
+  }
+}
+
+.register-header {
+  text-align: center;
+  padding: 20px 0 30px;
+  position: relative;
+  z-index: 1;
+  
+  .detection-animation {
+    margin: 0 auto 20px;
+    width: 120px;
+    height: 120px;
+    
+    .magnifying-glass {
+      width: 100%;
+      height: 100%;
+      
+      .pest-dot {
+        animation: pulse 2s ease-in-out infinite;
+        
+        &:nth-child(3) {
+          animation-delay: 0.5s;
+        }
+        
+        &:nth-child(4) {
+          animation-delay: 1s;
+        }
+      }
+    }
+  }
+  
+  .head {
+    display: block;
+    font-family: 'bold';
+    font-size: 24px;
+    color: var(--ion-color-primary);
+    margin-bottom: 8px;
+  }
+  
+  .sub {
+    display: block;
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    line-height: 1.4;
+  }
+}
+
+.form-container {
+  position: relative;
+  z-index: 1;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  padding: 30px 20px;
+  margin-top: 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  
+  .nature-input {
+    margin-bottom: 15px;
+    --padding-start: 12px;
+    --inner-padding-end: 12px;
+    
+    ion-icon[slot="start"] {
+      margin-right: 10px;
+    }
+  }
+  
+  .register-button {
+    margin: 25px 0 15px;
+    --padding-top: 18px;
+    --padding-bottom: 18px;
+    font-size: 16px;
+    
+    ion-icon[slot="start"] {
+      margin-right: 8px;
+    }
+    
+    ion-icon[slot="end"] {
+      margin-left: 8px;
+    }
+  }
+  
+  .divider {
+    position: relative;
+    margin: 25px 0;
+    text-align: center;
+    
+    span {
+      background: white;
+      padding: 0 15px;
+      position: relative;
+      z-index: 1;
+      color: var(--ion-color-medium);
+      font-size: 13px;
+    }
+    
+    &:before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--ion-color-light);
+      z-index: 0;
+    }
+  }
+  
+  .social-auth {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    
+    .social-button {
+      --border-width: 1px;
+      --border-style: solid;
+      --border-color: var(--ion-color-light);
+      --padding-start: 15px;
+      --padding-end: 15px;
+      font-size: 14px;
+      
+      ion-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+  
+  .login-prompt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    
+    ion-label {
+      color: var(--ion-color-medium);
+      font-size: 14px;
+      margin-right: 5px;
+    }
+    
+    ion-button {
+      --padding-start: 5px;
+      --padding-end: 5px;
+      font-size: 14px;
+    }
+  }
+  
+  .privacy-notice {
+    text-align: center;
+    margin-top: 30px;
+    
+    small {
+      font-size: 12px;
+    }
+    
+    a {
+      color: var(--ion-color-primary);
+      text-decoration: none;
+    }
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Accessibility Improvements */
+ion-input, ion-button {
+  --ion-font-family: "regular";
+}
+
+ion-input {
+  font-size: 16px;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+  .form-container {
+    max-width: 500px;
+    margin: 30px auto;
+    border-radius: 24px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .register-header {
+    padding-top: 40px;
+    
+    .head {
+      font-size: 28px;
+    }
+    
+    .sub {
+      font-size: 16px;
+    }
+  }
+}

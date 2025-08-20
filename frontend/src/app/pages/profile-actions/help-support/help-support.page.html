@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="../../profile/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Help & Support</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Frequently Asked Questions</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-accordion-group>
+          <ion-accordion value="first">
+            <ion-item slot="header" color="light">
+              <ion-label>How do I add a new plant?</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              To add a new plant, go to your Plant Collection and tap the '+' button. 
+              You can either take a photo of your plant or select from our database.
+            </div>
+          </ion-accordion>
+          
+          <ion-accordion value="second">
+            <ion-item slot="header" color="light">
+              <ion-label>How does pest detection work?</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              Our AI analyzes photos of your plants to identify common pests and diseases. 
+              For best results, take clear photos of affected leaves from multiple angles.
+            </div>
+          </ion-accordion>
+          
+          <ion-accordion value="third">
+            <ion-item slot="header" color="light">
+              <ion-label>How often should I water my plants?</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              Watering needs vary by plant type, season, and environment. The app provides 
+              personalized recommendations based on your specific plants and conditions.
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Contact Support</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Having issues with the app? Our team is here to help.</p>
+        
+        <ion-item button>
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label>Email Support</ion-label>
+        </ion-item>
+        
+        <ion-item button>
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          <ion-label>Submit a Bug Report</ion-label>
+        </ion-item>
+        
+        <ion-item button>
+          <ion-icon name="chatbubble-ellipses-outline" slot="start"></ion-icon>
+          <ion-label>Live Chat</ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Community Resources</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item button>
+          <ion-icon name="people-outline" slot="start"></ion-icon>
+          <ion-label>User Forums</ion-label>
+        </ion-item>
+        
+        <ion-item button>
+          <ion-icon name="videocam-outline" slot="start"></ion-icon>
+          <ion-label>Video Tutorials</ion-label>
+        </ion-item>
+        
+        <ion-item button>
+          <ion-icon name="book-outline" slot="start"></ion-icon>
+          <ion-label>Knowledge Base</ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

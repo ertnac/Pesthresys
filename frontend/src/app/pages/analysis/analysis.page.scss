@@ -1,0 +1,44 @@
+.analysis-screen {
+  padding: 10px;
+}
+
+.chart-container {
+  height: 60vh;
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chart-subtitle {
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 500;
+  color: #666;
+}
+
+.analysis-screen {
+  padding: 16px;
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.chart-subtitle {
+  text-align: center;
+  color: var(--ion-color-medium);
+  margin-bottom: 20px;
+}
+
+ion-card {
+  margin: 8px 0;
+}
+
+ion-grid {
+  padding: 0;
+}

@@ -1,0 +1,319 @@
+/*
+  PlantCare App Global Styles
+  Nature-inspired green theme with accessibility in mind
+*/
+
+/* Core Ionic CSS */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import '@ionic/angular/css/display.css';
+
+/* Optional CSS utils */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* Custom Fonts */
+@font-face {
+  font-family: "regular";
+  src: url(assets/fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: "medium";
+  src: url(assets/fonts/Roboto-Medium.ttf);
+}
+
+@font-face {
+  font-family: "bold";
+  src: url(assets/fonts/Roboto-Bold.ttf);
+}
+
+/* Nature-inspired Color Palette */
+:root {
+  --ion-color-primary: #2E7D32;  // Deep green
+  --ion-color-primary-rgb: 46,125,50;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255,255,255;
+  --ion-color-primary-shade: #286e2c;
+  --ion-color-primary-tint: #438a47;
+
+  --ion-color-secondary: #689F38;  // Medium green
+  --ion-color-secondary-rgb: 104,159,56;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255,255,255;
+  --ion-color-secondary-shade: #5c8c32;
+  --ion-color-secondary-tint: #77a94c;
+
+  --ion-color-tertiary: #8BC34A;  // Light green
+  --ion-color-tertiary-rgb: 139,195,74;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0,0,0;
+  --ion-color-tertiary-shade: #7aac41;
+  --ion-color-tertiary-tint: #97c95c;
+
+  --ion-color-success: #4CAF50;   // Success green
+  --ion-color-warning: #FFC107;   // Warning amber
+  --ion-color-danger: #F44336;    // Danger red
+  --ion-color-dark: #263238;      // Dark blue-gray
+  --ion-color-medium: #78909C;    // Medium blue-gray
+  --ion-color-light: #ECEFF1;     // Light blue-gray
+}
+
+/* Base Styles */
+* {
+  font-family: "regular";
+  box-sizing: border-box;
+}
+
+ion-content {
+  --background: #F5F9F5;  // Very light green background
+  --ion-text-color: var(--ion-color-dark);
+}
+
+ion-title {
+  font-size: 16px !important;
+  font-family: 'bold' !important;
+  color: var(--ion-color-primary-contrast) !important;
+}
+
+ion-button {
+  font-family: 'medium';
+  text-transform: capitalize;
+  --border-radius: 12px;
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.2s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Custom Modal Styles */
+ion-modal.custom_modal {
+  --border-radius: 16px;
+  --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  
+  .modal-wrapper {
+    width: 90% !important;
+    max-width: 400px;
+  }
+
+  &.bottom {
+    align-items: flex-end !important;
+    --height: auto;
+    --max-height: 80vh;
+  }
+}
+
+/* Utility Classes */
+.d-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Status Indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-family: 'medium';
+  
+  &.healthy {
+    background: rgba(var(--ion-color-success-rgb), 0.1);
+    color: var(--ion-color-success-shade);
+    
+    ion-icon {
+      color: var(--ion-color-success);
+    }
+  }
+  
+  &.warning {
+    background: rgba(var(--ion-color-warning-rgb), 0.1);
+    color: var(--ion-color-warning-shade);
+    
+    ion-icon {
+      color: var(--ion-color-warning);
+    }
+  }
+  
+  &.danger {
+    background: rgba(var(--ion-color-danger-rgb), 0.1);
+    color: var(--ion-color-danger-shade);
+    
+    ion-icon {
+      color: var(--ion-color-danger);
+    }
+  }
+  
+  ion-icon {
+    margin-right: 4px;
+    font-size: 14px;
+  }
+}
+
+/* Card Styles */
+.nature-card {
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  margin: 8px 0;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  ion-card-header {
+    background: rgba(var(--ion-color-primary-rgb), 0.05);
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+  
+  ion-card-title {
+    font-size: 16px;
+    color: var(--ion-color-primary);
+  }
+}
+
+/* Form Elements */
+.nature-input {
+  --background: white;
+  --border-radius: 12px;
+  --border-color: var(--ion-color-light);
+  --border-width: 1px;
+  --padding-start: 12px;
+  --highlight-color-focused: var(--ion-color-primary);
+  font-family: 'medium';
+  
+  &.has-focus {
+    --border-color: var(--ion-color-primary);
+    box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+}
+
+/* Tab Bar Styles */
+ion-tab-bar {
+  --background: white;
+  --border: 1px solid var(--ion-color-light);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  
+  ion-tab-button {
+    --color: var(--ion-color-medium);
+    --color-selected: var(--ion-color-primary);
+    
+    ion-icon {
+      font-size: 24px;
+    }
+    
+    ion-label {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+}
+
+/* Loading Spinner */
+.nature-spinner {
+  --color: var(--ion-color-primary);
+}
+
+/* Empty State Styles */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  
+  img {
+    width: 120px;
+    height: 120px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    font-size: 18px;
+    color: var(--ion-color-dark);
+    margin-bottom: 8px;
+  }
+  
+  p {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+    margin-bottom: 20px;
+  }
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  ion-title {
+    font-size: 18px !important;
+  }
+  
+  .nature-card {
+    margin: 12px auto;
+    max-width: 600px;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Accessibility Enhancements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --ion-color-primary: #1B5E20;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-text-color: #000000;
+  }
+  
+  ion-content {
+    --background: #ffffff;
+  }
+  
+  .nature-card {
+    border: 2px solid var(--ion-color-primary);
+  }
+}
+
+/* Optional: Add this to your global.scss for better modal appearance */
+.auto-height {
+  &.bottom {
+    align-items: flex-end;
+  }
+  
+  ion-content {
+    --overflow: hidden;
+  }
+  
+  .ion-page {
+    contain: none;
+  }
+}
