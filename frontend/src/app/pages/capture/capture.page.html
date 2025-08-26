@@ -41,19 +41,19 @@
     <!-- Analysis Results -->
     <div class="analysis-results" *ngIf="analysisComplete">
       <div class="result-card" [class.expanded]="resultExpanded">
-        <ion-card [color]="isChiliPlant ? (isInfected ? 'danger' : 'success') : 'warning'">
+        <ion-card [color]="isInfected ? 'danger' : 'success'">
           <ion-card-header>
             <ion-card-title>
-              <ion-icon [name]="isChiliPlant ? (isInfected ? 'warning-outline' : 'checkmark-circle-outline') : 'close-circle-outline'"></ion-icon>
-              {{ isChiliPlant ? (isInfected ? '⚠️ Infected Chili Plant' : '✅ Healthy Chili Plant') : '❌ Not a Chili Plant' }}
+              <ion-icon [name]="isInfected ? 'warning-outline' : 'checkmark-circle-outline'"></ion-icon>
+              {{ plantType }} - {{ isInfected ? '⚠️ Infected' : '✅ Healthy' }}
             </ion-card-title>
-            <ion-card-subtitle *ngIf="isChiliPlant">
+            <ion-card-subtitle>
               Analyzed on {{ currentDate | date:'medium' }}
             </ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
-            <div class="result-details" *ngIf="isChiliPlant">
+            <div class="result-details">
               <div class="health-status">
                 <ion-icon name="leaf-outline"></ion-icon>
                 <span>Health Status: {{ isInfected ? 'Infected' : 'Healthy' }}</span>
@@ -88,18 +88,13 @@
 
               <div *ngIf="!isInfected" class="healthy-message">
                 <ion-icon name="happy-outline"></ion-icon>
-                <p>Your chili plant looks great! No signs of pests or diseases detected.</p>
+                <p>Your plant looks great! No signs of pests detected.</p>
               </div>
-            </div>
-
-            <div *ngIf="!isChiliPlant" class="not-chili-message">
-              <ion-icon name="help-circle-outline"></ion-icon>
-              <p>This doesn't appear to be a chili plant. Try capturing a clearer image of a chili plant for analysis.</p>
             </div>
           </ion-card-content>
         </ion-card>
 
-        <!-- Save Scan Button - Moved outside the ion-card -->
+        <!-- Save Scan Button -->
         <ion-button expand="block" color="primary" (click)="saveScan()" fill="outline" class="save-button" 
                    [disabled]="!canSaveScan()">
           <ion-icon slot="start" name="save-outline"></ion-icon>

@@ -1,0 +1,442 @@
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Router } from '@angular/router';
+import { ActionSheetController, ToastController } from '@ionic/angular';
+import { DataService } from '../../services/data.service';
+import { NavController } from '@ionic/angular';
+
+import * as tf from '@tensorflow/tfjs';
+import * as tflite from '@tensorflow/tfjs-tflite';
+
+@Component({
+  selector: 'app-capture',
+  templateUrl: './capture.page.html',
+  styleUrls: ['./capture.page.scss'],
+})
+export class CapturePage implements OnInit {
+  @ViewChild('imagePreview', { static: false }) imagePreview!: ElementRef;
+
+  capturedImage: string | null = null;
+  isAnalyzing: boolean = false;
+  analysisComplete: boolean = false;
+  resultExpanded: boolean = false;
+
+  // Prediction results
+  plantType: string = '';
+  isInfected: boolean = false;
+  pestType: string = '';
+  severity: string = '';
+  severityValue: number = 0;
+  severityColor: string = 'warning';
+  recommendation: string = '';
+  currentDate: Date = new Date();
+  userNote: string = '';
+
+  private model: tflite.TFLiteModel | null = null;
+
+  private classes = [
+    'sitaw-healthy',
+    'sitaw-low',
+    'sitaw-moderate',
+    'sitaw-high',
+    'leaf-aphid-low',
+    'leaf-aphid-moderate',
+    'leaf-aphid-high',
+    'sitaw-aphid-low',
+    'sitaw-aphid-moderate',
+    'sitaw-aphid-high',
+    'leaf-healthy',
+    'leaf-low',
+    'leaf-moderate',
+    'leaf-high',
+  ];
+
+  constructor(
+    private router: Router,
+    private actionSheetCtrl: ActionSheetController,
+    private toastCtrl: ToastController,
+    private dataService: DataService,
+    private navCtrl: NavController
+  ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      this.capturedImage = navigation.extras.state['image'];
+    }
+  }
+
+  async ngOnInit() {
+    if (!this.capturedImage) {
+      this.navCtrl.back();
+      return;
+    }
+
+    this.resetAnalysisState();
+    await this.loadModel();
+  }
+
+  resetAnalysisState() {
+    this.isAnalyzing = false;
+    this.analysisComplete = false;
+    this.resultExpanded = false;
+    this.plantType = '';
+    this.isInfected = false;
+    this.pestType = '';
+    this.severity = '';
+    this.severityValue = 0;
+    this.severityColor = 'warning';
+    this.recommendation = '';
+    this.userNote = '';
+  }
+
+  /** Load TFLite Model */
+  async loadModel() {
+    try {
+      this.model = await tflite.loadTFLiteModel(
+        'assets/models/pest_detector.tflite'
+      );
+      console.log('TFLite model loaded successfully');
+    } catch (err) {
+      console.error('Error loading TFLite model:', err);
+      await this.presentToast('Failed to load model.');
+    }
+  }
+
+  /** Analyze captured image */
+  async analyzeImage() {
+    if (!this.model || !this.capturedImage) return;
+
+    this.isAnalyzing = true;
+    this.analysisComplete = false;
+
+    try {
+      const img = new Image();
+      img.src = this.capturedImage!;
+      await new Promise((resolve) => (img.onload = resolve));
+
+      const inputTensor = tf.browser
+        .fromPixels(img)
+        .resizeBilinear([224, 224])
+        .expandDims(0)
+        .toFloat()
+        .div(255);
+
+      // Use the NamedTensorMap format
+      const output: any = this.model.predict({ "input": inputTensor });
+
+      const predictions = output.dataSync() as Float32Array;
+      const maxIndex = predictions.indexOf(Math.max(...predictions));
+      const predictedClass = this.classes[maxIndex];
+
+      this.parsePredictedClass(predictedClass);
+
+      inputTensor.dispose();
+      output.dispose();
+    } catch (err) {
+      console.error('Error during analysis:', err);
+      await this.presentToast('Failed to analyze image. Try again.');
+    }
+
+    this.isAnalyzing = false;
+    this.analysisComplete = true;
+    this.resultExpanded = true;
+  }
+
+  /** Map predicted class to UI variables */
+  parsePredictedClass(predictedClass: string) {
+    const parts = predictedClass.split('-');
+    const plant = parts[0];
+    const status = parts[1];
+    const severity = parts[2] || '';
+
+    this.plantType = plant.charAt(0).toUpperCase() + plant.slice(1);
+    this.isInfected = status !== 'healthy';
+    this.severity = severity
+      ? severity.charAt(0).toUpperCase() + severity.slice(1)
+      : 'Healthy';
+
+    switch (severity) {
+      case 'low':
+        this.severityValue = 0.3;
+        this.severityColor = 'success';
+        break;
+      case 'moderate':
+        this.severityValue = 0.6;
+        this.severityColor = 'warning';
+        break;
+      case 'high':
+        this.severityValue = 0.9;
+        this.severityColor = 'danger';
+        break;
+      default:
+        this.severityValue = 0;
+        this.severityColor = 'success';
+        break;
+    }
+
+    if (this.isInfected) {
+      this.pestType = status === 'aphid' ? 'Aphid' : 'Other';
+      this.recommendation = this.getRecommendation(
+        this.pestType,
+        this.severity
+      );
+    } else {
+      this.pestType = '';
+      this.recommendation = '';
+    }
+  }
+
+  getRecommendation(pest: string, severity: string): string {
+    const recommendations: any = {
+      Aphid: {
+        Low: 'Spray with neem oil solution weekly for 2 weeks.',
+        Moderate: 'Apply insecticidal soap every 5 days for 3 applications.',
+        High: 'Use systemic insecticide and remove heavily infested leaves.',
+      },
+      Other: {
+        Low: 'Monitor the plant and remove minor infestations manually.',
+        Moderate: 'Apply appropriate biological control measures.',
+        High: 'Use chemical treatment and isolate affected plants.',
+      },
+    };
+
+    return (
+      recommendations[pest]?.[severity] ||
+      'Consult a local agricultural expert.'
+    );
+  }
+
+  retakePhoto() {
+    this.resetAnalysisState();
+  }
+
+  async presentToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+
+  canSaveScan(): boolean {
+    return this.analysisComplete && !!this.capturedImage;
+  }
+
+  async saveScan() {
+    if (!this.canSaveScan()) return;
+
+    const scanData = {
+      plantName: this.plantType,
+      plantImage: this.capturedImage,
+      status: this.isInfected ? 'infected' : 'healthy',
+      date: new Date(),
+      location: 'My Garden',
+      pestsDetected: this.isInfected
+        ? [{ name: this.pestType, severity: this.severity }]
+        : [],
+      notes: this.userNote.trim()
+        ? [{ text: this.userNote.trim(), date: new Date() }]
+        : [],
+      analysisDetails: {
+        plantType: this.plantType,
+        isInfected: this.isInfected,
+        pestType: this.pestType,
+        severity: this.severity,
+        recommendation: this.recommendation,
+      },
+    };
+
+    this.dataService.addScanToHistory(scanData);
+
+    const toast = await this.toastCtrl.create({
+      message: 'Scan saved to history!',
+      duration: 2000,
+      position: 'top',
+      color: 'success',
+      icon: 'checkmark-circle-outline',
+      buttons: [
+        {
+          text: 'View',
+          handler: () => this.router.navigate(['/tabs/history']),
+        },
+      ],
+    });
+    await toast.present();
+
+    this.userNote = '';
+  }
+
+  async shareResults() {
+    if (!this.analysisComplete) return;
+
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Share Results',
+      buttons: [
+        {
+          text: 'Share as Image',
+          icon: 'image-outline',
+          handler: () => this.presentToast('Image sharing placeholder'),
+        },
+        {
+          text: 'Share as Report',
+          icon: 'document-text-outline',
+          handler: () => this.presentToast('Report sharing placeholder'),
+        },
+        {
+          text: 'Copy Details',
+          icon: 'copy-outline',
+          handler: () => this.presentToast('Details copied to clipboard'),
+        },
+        { text: 'Cancel', icon: 'close', role: 'cancel' },
+      ],
+    });
+
+    await actionSheet.present();
+  }
+
+  viewSimilarCases() {
+    this.router.navigate(['/tabs/history'], {
+      queryParams: { pest: this.pestType },
+    });
+  }
+}
+
+
+
+
+
+
+
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home" class="back-button"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Analysis</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="shareResults()" fill="clear">
+        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="analysis-container">
+    <!-- Image Preview -->
+    <div class="image-preview-container">
+      <div class="image-wrapper">
+        <img [src]="capturedImage" alt="Captured Plant" class="captured-image" />
+        <div class="image-overlay" *ngIf="!isAnalyzing && !analysisComplete">
+          <ion-icon name="camera-outline"></ion-icon>
+        </div>
+        <ion-fab vertical="top" horizontal="end" slot="fixed" *ngIf="capturedImage && !isAnalyzing">
+          <ion-fab-button (click)="retakePhoto()" size="small" color="light">
+            <ion-icon name="camera-reverse-outline"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+      </div>
+    </div>
+
+    <!-- Analysis Controls -->
+    <div class="analysis-controls">
+      <ion-button expand="block" color="success" (click)="analyzeImage()" [disabled]="isAnalyzing" class="analyze-button">
+        <ion-spinner *ngIf="isAnalyzing" name="crescent"></ion-spinner>
+        <span *ngIf="!isAnalyzing">Analyze Image</span>
+        <span *ngIf="isAnalyzing">Analyzing...</span>
+      </ion-button>
+    </div>
+
+    <!-- Analysis Results -->
+    <div class="analysis-results" *ngIf="analysisComplete">
+      <div class="result-card" [class.expanded]="resultExpanded">
+        <ion-card [color]="isInfected ? 'danger' : 'success'">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon [name]="isInfected ? 'warning-outline' : 'checkmark-circle-outline'"></ion-icon>
+              {{ plantType }} - {{ isInfected ? '⚠️ Infected' : '✅ Healthy' }}
+            </ion-card-title>
+            <ion-card-subtitle>
+              Analyzed on {{ currentDate | date:'medium' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="result-details">
+              <div class="health-status">
+                <ion-icon name="leaf-outline"></ion-icon>
+                <span>Health Status: {{ isInfected ? 'Infected' : 'Healthy' }}</span>
+              </div>
+
+              <div *ngIf="isInfected" class="pest-details">
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="bug-outline"></ion-icon>
+                  <ion-label>
+                    <h3>Pest Detected</h3>
+                    <p>{{ pestType }}</p>
+                  </ion-label>
+                </ion-item>
+
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="alert-circle-outline"></ion-icon>
+                  <ion-label>
+                    <h3>Severity</h3>
+                    <p>{{ severity }}</p>
+                  </ion-label>
+                  <ion-progress-bar [value]="severityValue" [color]="severityColor"></ion-progress-bar>
+                </ion-item>
+
+                <ion-item lines="none">
+                  <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+                  <ion-label>
+                    <h3>Recommendation</h3>
+                    <p>{{ recommendation }}</p>
+                  </ion-label>
+                </ion-item>
+              </div>
+
+              <div *ngIf="!isInfected" class="healthy-message">
+                <ion-icon name="happy-outline"></ion-icon>
+                <p>Your plant looks great! No signs of pests detected.</p>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Save Scan Button -->
+        <ion-button expand="block" color="primary" (click)="saveScan()" fill="outline" class="save-button" 
+                   [disabled]="!canSaveScan()">
+          <ion-icon slot="start" name="save-outline"></ion-icon>
+          Save This Scan
+        </ion-button>
+
+        <div class="quick-actions">
+          <ion-button expand="block" color="medium" fill="clear" (click)="viewSimilarCases()" *ngIf="isInfected">
+            <ion-icon slot="start" name="search-outline"></ion-icon>
+            View Similar Cases
+          </ion-button>
+          
+          <div class="notes-section">
+            <ion-item>
+              <ion-textarea
+                [(ngModel)]="userNote"
+                placeholder="Add optional notes (e.g., location, plant details)"
+                rows="2"
+                autoGrow="true"
+                class="notes-textarea"
+              ></ion-textarea>
+            </ion-item>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loading-animation" *ngIf="isAnalyzing">
+      <div class="loading-content">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p>Analyzing your plant...</p>
+        <p class="hint-text">This usually takes 5-10 seconds</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

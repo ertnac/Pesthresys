@@ -4,6 +4,9 @@ import { ActionSheetController, ToastController } from '@ionic/angular';
 import { DataService } from '../../services/data.service';
 import { NavController } from '@ionic/angular';
 
+import * as tf from '@tensorflow/tfjs';
+import * as tflite from '@tensorflow/tfjs-tflite';
+
 @Component({
   selector: 'app-capture',
   templateUrl: './capture.page.html',
@@ -11,12 +14,14 @@ import { NavController } from '@ionic/angular';
 })
 export class CapturePage implements OnInit {
   @ViewChild('imagePreview', { static: false }) imagePreview!: ElementRef;
+
   capturedImage: string | null = null;
   isAnalyzing: boolean = false;
   analysisComplete: boolean = false;
-  isScrolled: boolean = false;
   resultExpanded: boolean = false;
-  isChiliPlant: boolean | null = null;
+
+  // Prediction results
+  plantType: string = '';
   isInfected: boolean = false;
   pestType: string = '';
   severity: string = '';
@@ -26,6 +31,25 @@ export class CapturePage implements OnInit {
   currentDate: Date = new Date();
   userNote: string = '';
 
+  private model: tflite.TFLiteModel | null = null;
+
+  private classes = [
+    'sitaw-healthy',
+    'sitaw-low',
+    'sitaw-moderate',
+    'sitaw-high',
+    'leaf-aphid-low',
+    'leaf-aphid-moderate',
+    'leaf-aphid-high',
+    'sitaw-aphid-low',
+    'sitaw-aphid-moderate',
+    'sitaw-aphid-high',
+    'leaf-healthy',
+    'leaf-low',
+    'leaf-moderate',
+    'leaf-high',
+  ];
+
   constructor(
     private router: Router,
     private actionSheetCtrl: ActionSheetController,
@@ -33,29 +57,27 @@ export class CapturePage implements OnInit {
     private dataService: DataService,
     private navCtrl: NavController
   ) {
-    // Get the image from navigation state
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
       this.capturedImage = navigation.extras.state['image'];
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!this.capturedImage) {
-      // If no image was captured, go back
       this.navCtrl.back();
       return;
     }
 
-    // Reset analysis state to ensure clean start
     this.resetAnalysisState();
+    await this.loadModel();
   }
 
   resetAnalysisState() {
     this.isAnalyzing = false;
     this.analysisComplete = false;
     this.resultExpanded = false;
-    this.isChiliPlant = null;
+    this.plantType = '';
     this.isInfected = false;
     this.pestType = '';
     this.severity = '';
@@ -65,161 +87,166 @@ export class CapturePage implements OnInit {
     this.userNote = '';
   }
 
-  initializeDemoData() {
-    // Random demo results (would come from your analysis service)
-    this.isChiliPlant = Math.random() > 0.2; // 80% chance it's a chili plant
-    if (this.isChiliPlant) {
-      this.isInfected = Math.random() > 0.5; // 50% chance it's infected
-      if (this.isInfected) {
-        const pests = [
-          'Aphids',
-          'Whiteflies',
-          'Spider Mites',
-          'Thrips',
-          'Mealybugs',
-        ];
-        this.pestType = pests[Math.floor(Math.random() * pests.length)];
+  /** Load TFLite Model */
+  async loadModel() {
+    try {
+      this.model = await tflite.loadTFLiteModel(
+        'assets/models/pest_detector.tflite'
+      );
+      console.log('TFLite model loaded successfully');
+    } catch (err) {
+      console.error('Error loading TFLite model:', err);
+      await this.presentToast('Failed to load model.');
+    }
+  }
 
-        const severities = ['Low', 'Medium', 'High', 'Critical'];
-        this.severity = severities[Math.floor(Math.random() * severities.length)];
+  /** Analyze captured image */
+  async analyzeImage() {
+    if (!this.model || !this.capturedImage) return;
 
-        // Set severity value for progress bar
-        switch (this.severity) {
-          case 'Low':
-            this.severityValue = 0.3;
-            this.severityColor = 'success';
-            break;
-          case 'Medium':
-            this.severityValue = 0.5;
-            this.severityColor = 'warning';
-            break;
-          case 'High':
-            this.severityValue = 0.7;
-            this.severityColor = 'danger';
-            break;
-          case 'Critical':
-            this.severityValue = 0.9;
-            this.severityColor = 'danger';
-            break;
-        }
+    this.isAnalyzing = true;
+    this.analysisComplete = false;
 
-        this.recommendation = this.getRecommendation(
-          this.pestType,
-          this.severity
-        );
-      }
+    try {
+      const img = new Image();
+      img.src = this.capturedImage!;
+      await new Promise((resolve) => (img.onload = resolve));
+
+      const inputTensor = tf.browser
+        .fromPixels(img)
+        .resizeBilinear([224, 224])
+        .expandDims(0)
+        .toFloat()
+        .div(255);
+
+      // Use the NamedTensorMap format
+      const output: any = this.model.predict({ "input": inputTensor });
+
+      const predictions = output.dataSync() as Float32Array;
+      const maxIndex = predictions.indexOf(Math.max(...predictions));
+      const predictedClass = this.classes[maxIndex];
+
+      this.parsePredictedClass(predictedClass);
+
+      inputTensor.dispose();
+      output.dispose();
+    } catch (err) {
+      console.error('Error during analysis:', err);
+      await this.presentToast('Failed to analyze image. Try again.');
+    }
+
+    this.isAnalyzing = false;
+    this.analysisComplete = true;
+    this.resultExpanded = true;
+  }
+
+  /** Map predicted class to UI variables */
+  parsePredictedClass(predictedClass: string) {
+    const parts = predictedClass.split('-');
+    const plant = parts[0];
+    const status = parts[1];
+    const severity = parts[2] || '';
+
+    this.plantType = plant.charAt(0).toUpperCase() + plant.slice(1);
+    this.isInfected = status !== 'healthy';
+    this.severity = severity
+      ? severity.charAt(0).toUpperCase() + severity.slice(1)
+      : 'Healthy';
+
+    switch (severity) {
+      case 'low':
+        this.severityValue = 0.3;
+        this.severityColor = 'success';
+        break;
+      case 'moderate':
+        this.severityValue = 0.6;
+        this.severityColor = 'warning';
+        break;
+      case 'high':
+        this.severityValue = 0.9;
+        this.severityColor = 'danger';
+        break;
+      default:
+        this.severityValue = 0;
+        this.severityColor = 'success';
+        break;
+    }
+
+    if (this.isInfected) {
+      this.pestType = status === 'aphid' ? 'Aphid' : 'Other';
+      this.recommendation = this.getRecommendation(
+        this.pestType,
+        this.severity
+      );
+    } else {
+      this.pestType = '';
+      this.recommendation = '';
     }
   }
 
   getRecommendation(pest: string, severity: string): string {
     const recommendations: any = {
-      Aphids: {
+      Aphid: {
         Low: 'Spray with neem oil solution weekly for 2 weeks.',
-        Medium: 'Apply insecticidal soap every 5 days for 3 applications.',
+        Moderate: 'Apply insecticidal soap every 5 days for 3 applications.',
         High: 'Use systemic insecticide and remove heavily infested leaves.',
-        Critical: 'Immediate treatment with chemical insecticide recommended.',
       },
-      Whiteflies: {
-        Low: 'Use yellow sticky traps and spray with water.',
-        Medium: 'Apply horticultural oil every 7 days for 3 weeks.',
-        High: 'Use insecticidal soap combined with neem oil treatments.',
-        Critical:
-          'Consider chemical control and remove heavily infested plants.',
-      },
-      'Spider Mites': {
-        Low: 'Spray plants with water to dislodge mites.',
-        Medium: 'Apply miticide or neem oil every 5-7 days.',
-        High: 'Use miticide in rotation to prevent resistance.',
-        Critical: 'Remove severely infested plants to prevent spread.',
-      },
-      Thrips: {
-        Low: 'Blue sticky traps and neem oil applications.',
-        Medium: 'Spinosad applications every 5 days for 3 treatments.',
-        High: 'Systemic insecticides may be necessary.',
-        Critical: 'Remove infected plants and treat surrounding area.',
-      },
-      Mealybugs: {
-        Low: 'Dab insects with alcohol-soaked cotton swabs.',
-        Medium: 'Apply insecticidal soap or neem oil weekly.',
-        High: 'Systemic insecticides combined with manual removal.',
-        Critical: 'Consider discarding heavily infested plants.',
+      Other: {
+        Low: 'Monitor the plant and remove minor infestations manually.',
+        Moderate: 'Apply appropriate biological control measures.',
+        High: 'Use chemical treatment and isolate affected plants.',
       },
     };
 
     return (
       recommendations[pest]?.[severity] ||
-      'Consult with a local agricultural expert for treatment options.'
+      'Consult a local agricultural expert.'
     );
   }
 
-  onScroll(ev: any) {
-    const scrollElement = ev.detail.scrollTop;
-    this.isScrolled =
-      scrollElement > this.imagePreview.nativeElement.offsetHeight;
-  }
-
-  async analyzeImage() {
-    this.isAnalyzing = true;
-    this.analysisComplete = false;
-
-    // Simulate analysis delay
-    setTimeout(() => {
-      this.isAnalyzing = false;
-      this.analysisComplete = true;
-      this.resultExpanded = true;
-      this.initializeDemoData(); // Initialize data after analysis completes
-    }, 2500);
-  }
-
   retakePhoto() {
-    // Reset state for a new capture
     this.resetAnalysisState();
   }
 
+  async presentToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+
   canSaveScan(): boolean {
-    // Can save if analysis is complete and we have a captured image
     return this.analysisComplete && !!this.capturedImage;
   }
 
   async saveScan() {
     if (!this.canSaveScan()) return;
 
-    // Create scan data object - let DataService generate the ID
     const scanData = {
-      plantName: this.isChiliPlant ? 'Chili Plant' : 'Other Plant',
+      plantName: this.plantType,
       plantImage: this.capturedImage,
-      status: this.isChiliPlant
-        ? this.isInfected
-          ? 'infected'
-          : 'healthy'
-        : 'unknown',
+      status: this.isInfected ? 'infected' : 'healthy',
       date: new Date(),
       location: 'My Garden',
       pestsDetected: this.isInfected
         ? [{ name: this.pestType, severity: this.severity }]
         : [],
       notes: this.userNote.trim()
-        ? [
-            {
-              text: this.userNote.trim(),
-              date: new Date(),
-            },
-          ]
+        ? [{ text: this.userNote.trim(), date: new Date() }]
         : [],
       analysisDetails: {
-        isChiliPlant: this.isChiliPlant,
+        plantType: this.plantType,
         isInfected: this.isInfected,
         pestType: this.pestType,
         severity: this.severity,
         recommendation: this.recommendation,
-        confidence: this.isChiliPlant !== null ? 'High' : 'Low',
       },
     };
 
-    // Save to data service
     this.dataService.addScanToHistory(scanData);
 
-    // Show success toast
     const toast = await this.toastCtrl.create({
       message: 'Scan saved to history!',
       duration: 2000,
@@ -229,15 +256,12 @@ export class CapturePage implements OnInit {
       buttons: [
         {
           text: 'View',
-          handler: () => {
-            this.router.navigate(['/tabs/history']);
-          },
+          handler: () => this.router.navigate(['/tabs/history']),
         },
       ],
     });
     await toast.present();
 
-    // Clear the note after saving
     this.userNote = '';
   }
 
@@ -250,42 +274,23 @@ export class CapturePage implements OnInit {
         {
           text: 'Share as Image',
           icon: 'image-outline',
-          handler: () => {
-            this.presentToast('Image sharing would be implemented here');
-          },
+          handler: () => this.presentToast('Image sharing placeholder'),
         },
         {
           text: 'Share as Report',
           icon: 'document-text-outline',
-          handler: () => {
-            this.presentToast('Report sharing would be implemented here');
-          },
+          handler: () => this.presentToast('Report sharing placeholder'),
         },
         {
           text: 'Copy Details',
           icon: 'copy-outline',
-          handler: () => {
-            this.presentToast('Details copied to clipboard');
-          },
+          handler: () => this.presentToast('Details copied to clipboard'),
         },
-        {
-          text: 'Cancel',
-          icon: 'close',
-          role: 'cancel',
-        },
+        { text: 'Cancel', icon: 'close', role: 'cancel' },
       ],
     });
 
     await actionSheet.present();
-  }
-
-  async presentToast(message: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 2000,
-      position: 'bottom',
-    });
-    await toast.present();
   }
 
   viewSimilarCases() {

@@ -1,4 +1,3 @@
-
 <ion-tabs>
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="home">
@@ -11,7 +10,6 @@
       <ion-label>History</ion-label>
     </ion-tab-button>
 
-
     <ion-tab-button></ion-tab-button>
 
     <ion-tab-button tab="deals">
@@ -19,16 +17,18 @@
       <ion-label>Analysis</ion-label>
     </ion-tab-button>
 
-
     <ion-tab-button tab="profile">
       <ion-icon aria-hidden="true" name="person-circle-outline"></ion-icon>
       <ion-label>Profile</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
-<ion-fab vertical="bottom" horizontal="center" slot="fixed" edge="false">
-  <ion-fab-button type="button" (click)="captureImage()">
+
+<!-- FAB -->
+<ion-fab vertical="bottom" horizontal="center" slot="fixed">
+  <ion-fab-button type="button" (click)="openImageOptions()">
     <ion-icon name="camera-outline"></ion-icon>
   </ion-fab-button>
 </ion-fab>
+
 
