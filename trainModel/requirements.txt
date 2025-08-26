@@ -1,3 +1,13 @@
 python-dotenv
 roboflow
 ultralytics
+TFlite
+pip install onnx tensorflow tensorflowjs
+pip install onnx2tf
+pip install python-dotenv
+pip install --upgrade "protobuf<3.21"
+pip install onnx_graphsurgeon onnx onnxslim onnx2tf
+pip install "protobuf<5,>=4.25.3"
+pip install tensorflow==2.10.1
+pip install tf-keras
+npm install onnxruntime-web

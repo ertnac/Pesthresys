@@ -1,6 +1,13 @@
-train: ./train/images
-val: ./val/images
-# test: ./test/images   # only if you have one
+train: ../train/images
+val: ../valid/images
+test: ../test/images
 
-nc: 5
-names: ["string-bean", "severe", "moderate-severe", "low-severe", "aphid"]
+nc: 10
+names: ['healthy', 'leaf-healthy', 'leaf-high', 'leaf-low', 'leaf-moderate', 'sitaw-aphid-high', 'sitaw-aphid-low', 'sitaw-aphid-moderate', 'sitaw-healthy', 'sitaw-moderate']
+
+roboflow:
+  workspace: pesthresys
+  project: string-beans-yxnss
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/pesthresys/string-beans-yxnss/dataset/2

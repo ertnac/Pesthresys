@@ -1,8 +1,8 @@
 
-eggplant - v4 2025-08-09 10:02pm
+String-Beans - v2 sitaw
 ==============================
 
-This dataset was exported via roboflow.com on August 9, 2025 at 7:02 PM GMT
+This dataset was exported via roboflow.com on August 24, 2025 at 10:57 PM GMT
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
@@ -17,15 +17,16 @@ visit https://github.com/roboflow/notebooks
 
 To find over 100k other datasets and pre-trained models, visit https://universe.roboflow.com
 
-The dataset includes 2432 images.
-Eggplant are annotated in folder format.
+The dataset includes 463 images.
+Aphid are annotated in YOLOv8 format.
 
 The following pre-processing was applied to each image:
 * Auto-orientation of pixel data (with EXIF-orientation stripping)
 * Resize to 640x640 (Stretch)
 
 The following augmentation was applied to create 3 versions of each source image:
-* 50% probability of horizontal flip
-* Equal probability of one of the following 90-degree rotations: none, clockwise, counter-clockwise
+* Random brigthness adjustment of between -21 and +21 percent
+* Random exposure adjustment of between -9 and +9 percent
+* Random Gaussian blur of between 0 and 4 pixels
 
 
