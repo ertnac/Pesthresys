@@ -5,7 +5,6 @@ import { DataService } from '../../services/data.service';
 import { NavController } from '@ionic/angular';
 
 import * as tf from '@tensorflow/tfjs';
-import * as tflite from '@tensorflow/tfjs-tflite';
 
 @Component({
   selector: 'app-capture',
@@ -30,24 +29,18 @@ export class CapturePage implements OnInit {
   recommendation: string = '';
   currentDate: Date = new Date();
   userNote: string = '';
-
-  private model: tflite.TFLiteModel | null = null;
-
+  private model: tf.LayersModel | null = null;
+  // private model: tflite.TFLiteModel | null = null;
+  // private model: tflite.TFLiteModel | null = null;
   private classes = [
-    'sitaw-healthy',
-    'sitaw-low',
-    'sitaw-moderate',
-    'sitaw-high',
-    'leaf-aphid-low',
-    'leaf-aphid-moderate',
-    'leaf-aphid-high',
-    'sitaw-aphid-low',
-    'sitaw-aphid-moderate',
-    'sitaw-aphid-high',
     'leaf-healthy',
+    'leaf-high',
     'leaf-low',
     'leaf-moderate',
-    'leaf-high',
+    'sitaw-healthy',
+    'sitaw-high',
+    'sitaw-low',
+    'sitaw-moderate'
   ];
 
   constructor(
@@ -90,94 +83,93 @@ export class CapturePage implements OnInit {
   /** Load TFLite Model */
   async loadModel() {
     try {
-      this.model = await tflite.loadTFLiteModel(
-        'assets/models/pest_detector.tflite'
-      );
-      console.log('TFLite model loaded successfully');
+      await tf.ready();
+      this.model = await tf.loadLayersModel('assets/models/new/model.json');
+      console.log('Model loaded');
     } catch (err) {
-      console.error('Error loading TFLite model:', err);
+      console.error('Error loading model:', err);
       await this.presentToast('Failed to load model.');
     }
   }
 
   /** Analyze captured image */
   async analyzeImage() {
-    if (!this.model || !this.capturedImage) return;
+  if (!this.model || !this.capturedImage) return;
 
-    this.isAnalyzing = true;
-    this.analysisComplete = false;
+  this.isAnalyzing = true;
+  this.analysisComplete = false;
 
-    try {
-      const img = new Image();
-      img.src = this.capturedImage!;
-      await new Promise((resolve) => (img.onload = resolve));
+  try {
+    const img = new Image();
+    img.src = this.capturedImage!;
+    await new Promise((resolve) => (img.onload = resolve));
 
-      const inputTensor = tf.browser
-        .fromPixels(img)
-        .resizeBilinear([224, 224])
-        .expandDims(0)
-        .toFloat()
-        .div(255);
+    const inputTensor = tf.browser
+      .fromPixels(img)
+      .resizeBilinear([224, 224])
+      .expandDims(0)
+      .toFloat()
+      .div(255);
 
-      // Use the NamedTensorMap format
-      const output: any = this.model.predict({ "input": inputTensor });
+    const output = this.model.predict(inputTensor) as tf.Tensor;
+    const predictions = await output.data();
 
-      const predictions = output.dataSync() as Float32Array;
-      const maxIndex = predictions.indexOf(Math.max(...predictions));
-      const predictedClass = this.classes[maxIndex];
+    const maxIndex = predictions.indexOf(Math.max(...predictions));
+    const predictedClass = this.classes[maxIndex];
 
-      this.parsePredictedClass(predictedClass);
+    this.parsePredictedClass(predictedClass);
 
-      inputTensor.dispose();
-      output.dispose();
-    } catch (err) {
-      console.error('Error during analysis:', err);
-      await this.presentToast('Failed to analyze image. Try again.');
-    }
-
-    this.isAnalyzing = false;
-    this.analysisComplete = true;
-    this.resultExpanded = true;
+    inputTensor.dispose();
+    output.dispose();
+  } catch (err) {
+    console.error('Error during analysis:', err);
+    await this.presentToast('Failed to analyze image. Try again.');
   }
 
+  this.isAnalyzing = false;
+  this.analysisComplete = true;
+  this.resultExpanded = true;
+}
   /** Map predicted class to UI variables */
   parsePredictedClass(predictedClass: string) {
+    console.log('Predicted Class:', predictedClass);
+    
     const parts = predictedClass.split('-');
     const plant = parts[0];
     const status = parts[1];
-    const severity = parts[2] || '';
+    const severity ='';  
 
     this.plantType = plant.charAt(0).toUpperCase() + plant.slice(1);
     this.isInfected = status !== 'healthy';
-    this.severity = severity
-      ? severity.charAt(0).toUpperCase() + severity.slice(1)
+    this.severity = status
+      ? status.charAt(0).toUpperCase() + status.slice(1)
       : 'Healthy';
-
-    switch (severity) {
-      case 'low':
-        this.severityValue = 0.3;
-        this.severityColor = 'success';
-        break;
-      case 'moderate':
-        this.severityValue = 0.6;
-        this.severityColor = 'warning';
-        break;
-      case 'high':
-        this.severityValue = 0.9;
-        this.severityColor = 'danger';
-        break;
-      default:
-        this.severityValue = 0;
-        this.severityColor = 'success';
-        break;
+    if (this.severity=='') {
+      this.severityValue = 0;
+      this.severityColor = 'success';
+    }
+    else if(this.severity == 'Low') {
+          this.severityValue = 0.3;
+          this.severityColor = 'success';
+    }
+    else if( this.severity == 'Moderate') {
+          this.severityValue = 0.6;
+          this.severityColor = 'warning';
+    }
+    else if( this.severity == 'High') {
+          this.severityValue = 0.9;
+          this.severityColor = 'danger';
     }
 
     if (this.isInfected) {
-      this.pestType = status === 'aphid' ? 'Aphid' : 'Other';
+      this.pestType = 'Aphid';
+      console.log (this.severityValue);
+      console.log (this.severityColor);
       this.recommendation = this.getRecommendation(
         this.pestType,
-        this.severity
+        status
       );
+      
     } else {
       this.pestType = '';
       this.recommendation = '';
@@ -185,11 +177,12 @@ export class CapturePage implements OnInit {
   }
 
   getRecommendation(pest: string, severity: string): string {
+    console.log('Getting recommendation for', pest, severity);
     const recommendations: any = {
       Aphid: {
-        Low: 'Spray with neem oil solution weekly for 2 weeks.',
-        Moderate: 'Apply insecticidal soap every 5 days for 3 applications.',
-        High: 'Use systemic insecticide and remove heavily infested leaves.',
+        low: 'Spray with neem oil solution weekly for 2 weeks.',
+        moderate: 'Apply insecticidal soap every 5 days for 3 applications.',
+        high: 'Use systemic insecticide and remove heavily infested leaves.',
       },
       Other: {
         Low: 'Monitor the plant and remove minor infestations manually.',
